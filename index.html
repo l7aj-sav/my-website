@@ -1,154 +1,115 @@
 
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>L7AJ WEBSITE</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>L7AJ Instagram Checker</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: #10051f;
+      padding: 20px;
+      background: #0c0c12;
       color: white;
+      font-family: Arial, sans-serif;
       text-align: center;
-      padding: 25px 15px;
     }
     .card {
       max-width: 400px;
-      margin: 45px auto;
-      padding: 25px;
-      background: #201033;
-      border: 1px solid #7946ad;
+      margin: 30px auto;
+      padding: 22px;
+      background: #191923;
+      border: 1px solid #343445;
       border-radius: 18px;
-      box-sizing: border-box;
     }
-    h1 { color: #c084fc; }
-    input, button {
-      width: 100%;
+    input {
       box-sizing: border-box;
+      width: 100%;
       padding: 13px;
       margin: 8px 0;
       border-radius: 9px;
-      font-size: 16px;
-    }
-    input {
-      border: 1px solid #70439a;
-      background: #10051f;
+      border: 1px solid #444;
+      background: #101018;
       color: white;
     }
     button {
-      border: none;
-      background: #9333ea;
+      width: 100%;
+      padding: 13px;
+      margin-top: 10px;
+      border: 0;
+      border-radius: 9px;
+      background: #7657ff;
       color: white;
       font-weight: bold;
-      cursor: pointer;
     }
-    button:disabled { opacity: .6; }
-    #status { overflow-wrap: anywhere; line-height: 1.7; }
+    a { color: #b8a8ff; }
     .hidden { display: none; }
+    #status, #igResult { overflow-wrap: anywhere; }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>L7AJ WEBSITE</h1>
-    <p>مرحبا بيك في موقع الحاج</p>
+  <h1>L7AJ</h1>
+  <p>Instagram Account Checker 🔵</p>
 
-    <div id="authArea">
-      <input id="email" type="email"
-        placeholder="البريد الإلكتروني" autocomplete="email">
-      <input id="password" type="password"
-        placeholder="كلمة السر" autocomplete="current-password">
+  <section id="loginCard" class="card">
+    <h2>تسجيل الدخول</h2>
+    <input id="email" type="email" placeholder="الإيميل">
+    <input id="password" type="password" placeholder="كلمة السر">
+    <button id="loginBtn">Login</button>
+    <p id="status"></p>
+  </section>
 
-      <button id="signupBtn">إنشاء حساب</button>
-      <button id="loginBtn">تسجيل الدخول</button>
-    </div>
+  <section id="app" class="card hidden">
+    <h2>مرحبا بك 👋</h2>
+    <p id="userEmail"></p>
 
-    <div id="userArea" class="hidden">
-      <h2>مرحبا بيك ❤️</h2>
-      <p>تم تسجيل الدخول بنجاح!</p>
-      <p id="userEmail"></p>
-      <button id="logoutBtn">تسجيل الخروج</button>
-    </div>
+    <hr>
+    <h2>فحص حساب Instagram 🔎</h2>
+    <p>اكتب اسم المستخدم لفتح الحساب والاطلاع على المعلومات العامة المتاحة.</p>
 
-    <p id="status" role="status"></p>
-  </div>
+    <input id="igUser" placeholder="Username أو @username">
+    <button id="checkBtn">فحص الحساب</button>
+    <p id="igResult"></p>
+
+    <p>
+      <a href="https://www.instagram.com/accounts/verified/"
+         target="_blank" rel="noopener noreferrer">
+        طلب التحقّق الرسمي من Instagram
+      </a>
+    </p>
+
+    <button id="logoutBtn">تسجيل الخروج</button>
+  </section>
 
   <script>
     const SUPABASE_URL =
       "https://eqnbmmbjkdykzoldjxjp.supabase.co";
 
-    // حطّ هنا نفس Publishable Key الموجود في كودك القديم.
-    const SUPABASE_KEY = "PASTE_YOUR_PUBLISHABLE_KEY_HERE";
-
+    const SUPABASE_KEY = "sb_publishable_LKEgNqgJKg4KwqNV6Ml4Mg_OxP0bd3W";
     const client = window.supabase.createClient(
       SUPABASE_URL, SUPABASE_KEY
-    const emailInput = document.getElementById("email");
-    const passwordInput = document.getElementById("password");
-    const authArea = document.getElementById("authArea");
-    const userArea = document.getElementById("userArea");
+    );
+
+    const loginCard = document.getElementById("loginCard");
+    const app = document.getElementById("app");
     const status = document.getElementById("status");
 
     function showUser(user) {
-      authArea.classList.add("hidden");
-      userArea.classList.remove("hidden");
-      document.getElementById("userEmail").textContent = user.email || "";
+      loginCard.classList.add("hidden");
+      app.classList.remove("hidden");
+      document.getElementById("userEmail").textContent =
+        user.email || "تم تسجيل الدخول";
     }
 
     function showLogin() {
-      authArea.classList.remove("hidden");
-      userArea.classList.add("hidden");
+      app.classList.add("hidden");
+      loginCard.classList.remove("hidden");
     }
-
-    async function refreshSession() {
-      const { data, error } = await client.auth.getSession();
-
-      if (error) {
-        status.textContent = error.message;
-        return;
-      }
-
-      if (data.session) {
-        showUser(data.session.user);
-      } else {
-        showLogin();
-      }
-    }
-
-    document.getElementById("signupBtn").onclick = async () => {
-      const email = emailInput.value.trim();
-      const password = passwordInput.value;
-
-      if (!email || !password) {
-        status.textContent = "اكتب الإيميل وكلمة السر.";
-        return;
-      }
-
-      status.textContent = "جاري إنشاء الحساب...";
-
-      const { data, error } = await client.auth.signUp({
-        email,
-        password
-      });
-
-      if (error) {
-        status.textContent = error.message;
-        return;
-      }
-
-      if (data.session) {
-        showUser(data.session.user);
-        status.textContent = "تم إنشاء الحساب والدخول بنجاح!";
-      } else {
-        status.textContent =
-          "تم إنشاء الحساب. يلزم تسجيل الدخول إذا ما عندكش جلسة دخول.";
-      }
-    };
 
     document.getElementById("loginBtn").onclick = async () => {
-      const email = emailInput.value.trim();
-      const password = passwordInput.value;
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
 
       if (!email || !password) {
         status.textContent = "اكتب الإيميل وكلمة السر.";
@@ -156,10 +117,8 @@
       }
 
       status.textContent = "جاري تسجيل الدخول...";
-
       const { data, error } = await client.auth.signInWithPassword({
-        email,
-        password
+        email, password
       });
 
       if (error) {
@@ -167,29 +126,61 @@
         return;
       }
 
+      status.textContent = "";
+      document.getElementById("password").value = "";
       showUser(data.user);
-      status.textContent = "تم تسجيل الدخول بنجاح!";
     };
 
     document.getElementById("logoutBtn").onclick = async () => {
       const { error } = await client.auth.signOut();
+      if (error) {
+        alert(error.message);
+        return;
+      }
+      showLogin();
+    };
 
+    document.getElementById("checkBtn").onclick = () => {
+      const user = document.getElementById("igUser")
+        .value.trim().replace(/^@/, "");
+      const result = document.getElementById("igResult");
+      result.replaceChildren();
+
+      if (!/^[a-zA-Z0-9._]{1,30}$/.test(user)) {
+        result.textContent = "اكتب Username صحيح.";
+        return;
+      }
+
+      result.textContent =
+        "الحساب المطلوب: @" + user + " — ";
+
+      const link = document.createElement("a");
+      link.href = "https://www.instagram.com/" +
+        encodeURIComponent(user) + "/";
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.textContent = "فتح الحساب";
+      result.appendChild(link);
+
+      const note = document.createElement("p");
+      note.textContent =
+        "هذا فحص أولي للاسم فقط، وليس تأكيداً لهوية صاحب الحساب أو أهليته للعلامة الزرقاء.";
+      result.appendChild(note);
+    };
+
+    async function refreshSession() {
+      const { data, error } = await client.auth.getSession();
       if (error) {
         status.textContent = error.message;
         return;
       }
-
-      showLogin();
-      passwordInput.value = "";
-      status.textContent = "خرجت من حسابك بنجاح.";
-    };
+      if (data.session) showUser(data.session.user);
+      else showLogin();
+    }
 
     client.auth.onAuthStateChange((_event, session) => {
-      if (session) {
-        showUser(session.user);
-      } else {
-        showLogin();
-      }
+      if (session) showUser(session.user);
+      else showLogin();
     });
 
     refreshSession();
