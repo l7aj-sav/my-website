@@ -2,87 +2,199 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>L7AJ Website</title>
-<style>
-body {
-  background: #100d1c;
-  color: white;
-  font-family: Arial, sans-serif;
-  text-align: center;
-  padding: 20px;
-}
-.box {
-  max-width: 380px;
-  margin: 40px auto;
-  background: #211a32;
-  padding: 22px;
-  border-radius: 16px;
-}
-input, button {
-  box-sizing: border-box;
-  width: 100%;
-  padding: 13px;
-  margin: 8px 0;
-  border-radius: 8px;
-  border: 0;
-}
-button {
-  background: #8b5cf6;
-  color: white;
-  font-weight: bold;
-}
-h1 { color: #c4a5ff; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>L7AJ WEBSITE</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #10051f;
+      color: white;
+      text-align: center;
+      padding: 25px 15px;
+    }
+    .card {
+      max-width: 400px;
+      margin: 45px auto;
+      padding: 25px;
+      background: #201033;
+      border: 1px solid #7946ad;
+      border-radius: 18px;
+      box-sizing: border-box;
+    }
+    h1 { color: #c084fc; }
+    input, button {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 13px;
+      margin: 8px 0;
+      border-radius: 9px;
+      font-size: 16px;
+    }
+    input {
+      border: 1px solid #70439a;
+      background: #10051f;
+      color: white;
+    }
+    button {
+      border: none;
+      background: #9333ea;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:disabled { opacity: .6; }
+    #status { overflow-wrap: anywhere; line-height: 1.7; }
+    .hidden { display: none; }
+  </style>
 </head>
 <body>
-<div class="box">
-  <h1>L7AJ WEBSITE</h1>
-  <h3>إنشاء حساب أو تسجيل الدخول</h3>
-  <input id="email" type="email" placeholder="البريد الإلكتروني">
-  <input id="password" type="password" placeholder="كلمة السر (8 أحرف على الأقل)">
-  <button onclick="signup()">إنشاء حساب</button>
-  <button onclick="login()">تسجيل الدخول</button>
-  <button onclick="logout()">تسجيل الخروج</button>
-  <p id="msg">مرحبا بيك في L7AJ Website</p>
-</div>
+  <div class="card">
+    <h1>L7AJ WEBSITE</h1>
+    <p>مرحبا بيك في موقع الحاج</p>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-const SUPABASE_URL = "https://eqnbmmbjkdykzoldjxjp.supabase.co";
-const SUPABASE_KEY = "sb_publishable_LKEgNqgJKg4KwqNV6Ml4Mg_OxP0bd3W";
+    <div id="authArea">
+      <input id="email" type="email"
+        placeholder="البريد الإلكتروني" autocomplete="email">
+      <input id="password" type="password"
+        placeholder="كلمة السر" autocomplete="current-password">
 
-const client = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
+      <button id="signupBtn">إنشاء حساب</button>
+      <button id="loginBtn">تسجيل الدخول</button>
+    </div>
 
-const msg = document.getElementById("msg");
+    <div id="userArea" class="hidden">
+      <h2>مرحبا بيك ❤️</h2>
+      <p>تم تسجيل الدخول بنجاح!</p>
+      <p id="userEmail"></p>
+      <button id="logoutBtn">تسجيل الخروج</button>
+    </div>
 
-async function signup() {
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-  if (!email || password.length < 8) {
-    msg.textContent = "اكتب إيميل صحيح وكلمة سر من 8 أحرف على الأقل.";
-    return;
-  }
-  const { error } = await client.auth.signUp({ email, password });
-  msg.textContent = error ? error.message :
-    "تم إرسال طلب التسجيل. تفقد بريدك الإلكتروني إذا طُلب التأكيد.";
-}
+    <p id="status" role="status"></p>
+  </div>
 
-async function login() {
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-  const { error } = await client.auth.signInWithPassword({ email, password });
-  msg.textContent = error ? error.message : "تم تسجيل الدخول بنجاح!";
-}
+  <script>
+    const SUPABASE_URL =
+      "https://eqnbmmbjkdykzoldjxjp.supabase.co";
 
-async function logout() {
-  const { error } = await client.auth.signOut();
-  msg.textContent = error ? error.message : "تم تسجيل الخروج.";
-}
-</script>
+    // حطّ هنا نفس Publishable Key الموجود في كودك القديم.
+    const SUPABASE_KEY = "PASTE_YOUR_PUBLISHABLE_KEY_HERE";
+
+    const client = window.supabase.createClient(
+      SUPABASE_URL, SUPABASE_KEY
+    );
+
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const authArea = document.getElementById("authArea");
+    const userArea = document.getElementById("userArea");
+    const status = document.getElementById("status");
+
+    function showUser(user) {
+      authArea.classList.add("hidden");
+      userArea.classList.remove("hidden");
+      document.getElementById("userEmail").textContent = user.email || "";
+    }
+
+    function showLogin() {
+      authArea.classList.remove("hidden");
+      userArea.classList.add("hidden");
+    }
+
+    async function refreshSession() {
+      const { data, error } = await client.auth.getSession();
+
+      if (error) {
+        status.textContent = error.message;
+        return;
+      }
+
+      if (data.session) {
+        showUser(data.session.user);
+      } else {
+        showLogin();
+      }
+    }
+
+    document.getElementById("signupBtn").onclick = async () => {
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!email || !password) {
+        status.textContent = "اكتب الإيميل وكلمة السر.";
+        return;
+      }
+
+      status.textContent = "جاري إنشاء الحساب...";
+
+      const { data, error } = await client.auth.signUp({
+        email,
+        password
+      });
+
+      if (error) {
+        status.textContent = error.message;
+        return;
+      }
+
+      if (data.session) {
+        showUser(data.session.user);
+        status.textContent = "تم إنشاء الحساب والدخول بنجاح!";
+      } else {
+        status.textContent =
+          "تم إنشاء الحساب. يلزم تسجيل الدخول إذا ما عندكش جلسة دخول.";
+      }
+    };
+
+    document.getElementById("loginBtn").onclick = async () => {
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!email || !password) {
+        status.textContent = "اكتب الإيميل وكلمة السر.";
+        return;
+      }
+
+      status.textContent = "جاري تسجيل الدخول...";
+
+      const { data, error } = await client.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) {
+        status.textContent = error.message;
+        return;
+      }
+
+      showUser(data.user);
+      status.textContent = "تم تسجيل الدخول بنجاح!";
+    };
+
+    document.getElementById("logoutBtn").onclick = async () => {
+      const { error } = await client.auth.signOut();
+
+      if (error) {
+        status.textContent = error.message;
+        return;
+      }
+
+      showLogin();
+      passwordInput.value = "";
+      status.textContent = "خرجت من حسابك بنجاح.";
+    };
+
+    client.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        showUser(session.user);
+      } else {
+        showLogin();
+      }
+    });
+
+    refreshSession();
+  </script>
 </body>
 </html>
