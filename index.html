@@ -1,13 +1,182 @@
 
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Website</title>
+  <title>Instagram Security Check</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #09090f;
+      color: white;
+      font-family: Arial, sans-serif;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 430px;
+      padding: 28px 22px;
+      border: 1px solid #393047;
+      border-radius: 22px;
+      background: #15121c;
+      box-shadow: 0 0 35px #833ab722;
+      text-align: center;
+    }
+
+    .logo {
+      font-size: 42px;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      font-size: 25px;
+      margin: 8px 0;
+      background: linear-gradient(90deg, #feda75, #d62976, #962fbf);
+      color: transparent;
+      background-clip: text;
+    }
+
+    .desc {
+      color: #c3bdce;
+      line-height: 1.8;
+      font-size: 14px;
+    }
+
+    input {
+      width: 100%;
+      margin-top: 18px;
+      padding: 15px;
+      background: #09090f;
+      color: white;
+      border: 1px solid #51445e;
+      border-radius: 10px;
+      font-size: 16px;
+      direction: ltr;
+      text-align: left;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 13px;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(90deg, #d62976, #962fbf);
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    #result {
+      display: none;
+      text-align: right;
+      margin-top: 22px;
+      padding: 16px;
+      border-radius: 12px;
+      background: #211c2b;
+      line-height: 1.9;
+      overflow-wrap: anywhere;
+    }
+
+    .notice {
+      color: #aaa2b7;
+      font-size: 12px;
+      line-height: 1.8;
+      margin-top: 18px;
+    }
+
+    a { color: #f3a6d0; }
+  </style>
 </head>
 <body>
-  <h1>Welcome to my website!</h1>
-  <p>My website is working.</p>
+  <main class="card">
+    <div class="logo">📸</div>
+    <h1>Instagram Security Check</h1>
+
+    <p class="desc">
+      تثبّت من أمان حسابك وتعرّف على الخطوات
+      المناسبة لحلّ مشاكل الدخول.
+    </p>
+
+    <form id="checkForm">
+      <input
+        id="username"
+        type="text"
+        placeholder="Instagram username"
+        autocomplete="off"
+        maxlength="30"
+        required
+        aria-label="اسم المستخدم"
+      >
+      <button type="submit">فحص وإظهار النصائح</button>
+    </form>
+
+    <section id="result" aria-live="polite"></section>
+
+    <p class="notice">
+      هذا الموقع مستقل وغير تابع لـ Instagram.
+      اسم المستخدم وحده لا يكشف حالة الحساب الداخلية
+      ولا يثبت إذا كان مخترقًا. لا تدخل كلمة السرّ أو
+      رموز التحقق هنا.
+    </p>
+  </main>
+
+  <script>
+    const form = document.getElementById("checkForm");
+    const input = document.getElementById("username");
+    const result = document.getElementById("result");
+
+    form.addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      const username = input.value.trim().replace(/^@/, "");
+
+      if (!/^[A-Za-z0-9._]{1,30}$/.test(username)) {
+        result.style.display = "block";
+        result.textContent =
+          "اسم المستخدم غير صالح. استعمل الحروف الإنجليزية والأرقام والنقطة أو الشرطة السفلية.";
+        return;
+      }
+
+      result.replaceChildren();
+      result.style.display = "block";
+
+      const heading = document.createElement("h3");
+      heading.textContent = "نتيجة الفحص لـ @" + username;
+
+      const intro = document.createElement("p");
+      intro.textContent =
+        "ما نجمناش نحدّدوا حالة الحساب الداخلية باسم المستخدم فقط.";
+
+      const list = document.createElement("ul");
+      [
+        "إذا ما تنجمش تدخل، تأكّد من اسم المستخدم واتصال الإنترنت.",
+        "راجع تنبيهات الأمان ورسائل Instagram الرسمية.",
+        "إذا تشكّ في اختراق، استعمل صفحة الاسترجاع الرسمية.",
+        "فعّل المصادقة الثنائية وراجع الأجهزة المتصلة بحسابك."
+      ].forEach(function(tip) {
+        const item = document.createElement("li");
+        item.textContent = tip;
+        list.appendChild(item);
+      });
+
+      const link = document.createElement("a");
+      link.href = "https://www.instagram.com/hacked/";
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.textContent = "افتح صفحة استرجاع الحساب الرسمية";
+
+      result.append(heading, intro, list, link);
+    });
+  </script>
 </body>
 </html>
