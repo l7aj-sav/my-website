@@ -1,182 +1,88 @@
 
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Instagram Security Check</title>
-  <style>
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background: #09090f;
-      color: white;
-      font-family: Arial, sans-serif;
-      display: grid;
-      place-items: center;
-      padding: 20px;
-    }
-
-    .card {
-      width: 100%;
-      max-width: 430px;
-      padding: 28px 22px;
-      border: 1px solid #393047;
-      border-radius: 22px;
-      background: #15121c;
-      box-shadow: 0 0 35px #833ab722;
-      text-align: center;
-    }
-
-    .logo {
-      font-size: 42px;
-      margin-bottom: 10px;
-    }
-
-    h1 {
-      font-size: 25px;
-      margin: 8px 0;
-      background: linear-gradient(90deg, #feda75, #d62976, #962fbf);
-      color: transparent;
-      background-clip: text;
-    }
-
-    .desc {
-      color: #c3bdce;
-      line-height: 1.8;
-      font-size: 14px;
-    }
-
-    input {
-      width: 100%;
-      margin-top: 18px;
-      padding: 15px;
-      background: #09090f;
-      color: white;
-      border: 1px solid #51445e;
-      border-radius: 10px;
-      font-size: 16px;
-      direction: ltr;
-      text-align: left;
-    }
-
-    button {
-      width: 100%;
-      margin-top: 13px;
-      padding: 14px;
-      border: none;
-      border-radius: 10px;
-      background: linear-gradient(90deg, #d62976, #962fbf);
-      color: white;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    #result {
-      display: none;
-      text-align: right;
-      margin-top: 22px;
-      padding: 16px;
-      border-radius: 12px;
-      background: #211c2b;
-      line-height: 1.9;
-      overflow-wrap: anywhere;
-    }
-
-    .notice {
-      color: #aaa2b7;
-      font-size: 12px;
-      line-height: 1.8;
-      margin-top: 18px;
-    }
-
-    a { color: #f3a6d0; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>L7AJ Website</title>
+<style>
+body {
+  background: #100d1c;
+  color: white;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 20px;
+}
+.box {
+  max-width: 380px;
+  margin: 40px auto;
+  background: #211a32;
+  padding: 22px;
+  border-radius: 16px;
+}
+input, button {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 13px;
+  margin: 8px 0;
+  border-radius: 8px;
+  border: 0;
+}
+button {
+  background: #8b5cf6;
+  color: white;
+  font-weight: bold;
+}
+h1 { color: #c4a5ff; }
+</style>
 </head>
 <body>
-  <main class="card">
-    <div class="logo">📸</div>
-    <h1>Instagram Security Check</h1>
+<div class="box">
+  <h1>L7AJ WEBSITE</h1>
+  <h3>إنشاء حساب أو تسجيل الدخول</h3>
+  <input id="email" type="email" placeholder="البريد الإلكتروني">
+  <input id="password" type="password" placeholder="كلمة السر (8 أحرف على الأقل)">
+  <button onclick="signup()">إنشاء حساب</button>
+  <button onclick="login()">تسجيل الدخول</button>
+  <button onclick="logout()">تسجيل الخروج</button>
+  <p id="msg">مرحبا بيك في L7AJ Website</p>
+</div>
 
-    <p class="desc">
-      تثبّت من أمان حسابك وتعرّف على الخطوات
-      المناسبة لحلّ مشاكل الدخول.
-    </p>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://eqnbmmbjkdykzoldjxjp.supabase.co";
+const SUPABASE_KEY = "sb_publishable_LKEgNqgJKg4KwqNV6Ml4Mg_OxP0bd3W";
 
-    <form id="checkForm">
-      <input
-        id="username"
-        type="text"
-        placeholder="Instagram username"
-        autocomplete="off"
-        maxlength="30"
-        required
-        aria-label="اسم المستخدم"
-      >
-      <button type="submit">فحص وإظهار النصائح</button>
-    </form>
+const client = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 
-    <section id="result" aria-live="polite"></section>
+const msg = document.getElementById("msg");
 
-    <p class="notice">
-      هذا الموقع مستقل وغير تابع لـ Instagram.
-      اسم المستخدم وحده لا يكشف حالة الحساب الداخلية
-      ولا يثبت إذا كان مخترقًا. لا تدخل كلمة السرّ أو
-      رموز التحقق هنا.
-    </p>
-  </main>
+async function signup() {
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  if (!email || password.length < 8) {
+    msg.textContent = "اكتب إيميل صحيح وكلمة سر من 8 أحرف على الأقل.";
+    return;
+  }
+  const { error } = await client.auth.signUp({ email, password });
+  msg.textContent = error ? error.message :
+    "تم إرسال طلب التسجيل. تفقد بريدك الإلكتروني إذا طُلب التأكيد.";
+}
 
-  <script>
-    const form = document.getElementById("checkForm");
-    const input = document.getElementById("username");
-    const result = document.getElementById("result");
+async function login() {
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  const { error } = await client.auth.signInWithPassword({ email, password });
+  msg.textContent = error ? error.message : "تم تسجيل الدخول بنجاح!";
+}
 
-    form.addEventListener("submit", function(event) {
-      event.preventDefault();
-
-      const username = input.value.trim().replace(/^@/, "");
-
-      if (!/^[A-Za-z0-9._]{1,30}$/.test(username)) {
-        result.style.display = "block";
-        result.textContent =
-          "اسم المستخدم غير صالح. استعمل الحروف الإنجليزية والأرقام والنقطة أو الشرطة السفلية.";
-        return;
-      }
-
-      result.replaceChildren();
-      result.style.display = "block";
-
-      const heading = document.createElement("h3");
-      heading.textContent = "نتيجة الفحص لـ @" + username;
-
-      const intro = document.createElement("p");
-      intro.textContent =
-        "ما نجمناش نحدّدوا حالة الحساب الداخلية باسم المستخدم فقط.";
-
-      const list = document.createElement("ul");
-      [
-        "إذا ما تنجمش تدخل، تأكّد من اسم المستخدم واتصال الإنترنت.",
-        "راجع تنبيهات الأمان ورسائل Instagram الرسمية.",
-        "إذا تشكّ في اختراق، استعمل صفحة الاسترجاع الرسمية.",
-        "فعّل المصادقة الثنائية وراجع الأجهزة المتصلة بحسابك."
-      ].forEach(function(tip) {
-        const item = document.createElement("li");
-        item.textContent = tip;
-        list.appendChild(item);
-      });
-
-      const link = document.createElement("a");
-      link.href = "https://www.instagram.com/hacked/";
-      link.target = "_blank";
-      link.rel = "noopener noreferrer";
-      link.textContent = "افتح صفحة استرجاع الحساب الرسمية";
-
-      result.append(heading, intro, list, link);
-    });
-  </script>
+async function logout() {
+  const { error } = await client.auth.signOut();
+  msg.textContent = error ? error.message : "تم تسجيل الخروج.";
+}
+</script>
 </body>
 </html>
