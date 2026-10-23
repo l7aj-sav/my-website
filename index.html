@@ -2,303 +2,177 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>L7AJ Instagram Checker</title>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <style>
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      padding: 20px;
-      background: #0c0c12;
-      color: white;
-      font-family: Arial, sans-serif;
-      text-align: center;
-    }
-
-    h1 {
-      color: #b8a8ff;
-      font-size: 38px;
-    }
-
-    .card {
-      max-width: 420px;
-      margin: 25px auto;
-      padding: 22px;
-      background: #191923;
-      border: 1px solid #343445;
-      border-radius: 18px;
-      box-shadow: 0 8px 30px #0005;
-    }
-
-    input {
-      display: block;
-      width: 100%;
-      padding: 14px;
-      margin: 10px 0;
-      border: 1px solid #444;
-      border-radius: 9px;
-      background: #101018;
-      color: white;
-      font-size: 16px;
-    }
-
-    button, .profile-link {
-      display: block;
-      width: 100%;
-      padding: 14px;
-      margin-top: 12px;
-      border: 0;
-      border-radius: 9px;
-      background: #7657ff;
-      color: white;
-      font-size: 15px;
-      font-weight: bold;
-      text-decoration: none;
-      cursor: pointer;
-    }
-
-    a { color: #c7baff; }
-
-    .hidden { display: none !important; }
-
-    .result {
-      margin-top: 18px;
-      padding: 16px;
-      border-radius: 12px;
-      background: #101018;
-      overflow-wrap: anywhere;
-    }
-
-    .avatar {
-      display: block;
-      width: 120px;
-      height: 120px;
-      margin: 15px auto;
-      border-radius: 50%;
-      border: 3px solid #7657ff;
-      object-fit: cover;
-    }
-
-    .note {
-      color: #c5c5d5;
-      font-size: 13px;
-      line-height: 1.7;
-    }
-
-    #status, #igResult {
-      overflow-wrap: anywhere;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>L7AJ CHECKER</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:18px;background:#0c0c12;color:#fff;font-family:Arial,sans-serif;text-align:center}
+h1{color:#b8a8ff;font-size:34px}
+.card{max-width:440px;margin:20px auto;padding:22px;background:#191923;border:1px solid #343445;border-radius:18px;box-shadow:0 8px 30px #0005}
+input{width:100%;padding:14px;margin:9px 0;border:1px solid #444;border-radius:9px;background:#101018;color:white;font-size:16px}
+button,.button{display:block;width:100%;padding:13px;margin-top:11px;border:0;border-radius:9px;background:#7657ff;color:white;font-weight:bold;font-size:15px;text-decoration:none;cursor:pointer}
+.secondary{background:#343445}
+.hidden{display:none!important}
+.note{color:#c5c5d5;font-size:13px;line-height:1.7}
+#status,#message{overflow-wrap:anywhere}
+.avatar{width:125px;height:125px;object-fit:cover;border-radius:50%;border:3px solid #7657ff;margin:15px auto;display:block}
+.stat{background:#101018;padding:13px;border-radius:10px;border:1px solid #343445}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px}
+.label{color:#b8a8ff;font-size:13px}
+.value{font-size:19px;font-weight:bold;margin-top:8px;overflow-wrap:anywhere}
+ul{text-align:right;line-height:2}
+a{color:#c7baff}
+</style>
 </head>
-
 <body>
-  <h1>L7AJ</h1>
-  <p>Instagram Account Checker 🔎</p>
 
-  <section id="loginCard" class="card">
-    <h2>تسجيل الدخول</h2>
+<h1>L7AJ CHECKER</h1>
+<p>Instagram Account Information</p>
 
-    <input id="email" type="email"
-      placeholder="الإيميل" autocomplete="email">
+<section id="loginPage" class="card">
+<h2>تسجيل الدخول</h2>
+<input id="email" type="email" placeholder="الإيميل" autocomplete="email">
+<input id="password" type="password" placeholder="كلمة السر" autocomplete="current-password">
+<button id="loginBtn">دخول</button>
+<p id="status" class="note"></p>
+</section>
 
-    <input id="password" type="password"
-      placeholder="كلمة السر" autocomplete="current-password">
+<section id="page1" class="card hidden">
+<h2>الصفحة 1 — فحص الحساب 🔎</h2>
+<p>اكتب اسم المستخدم من غير كلمة السر.</p>
+<input id="username" placeholder="@username">
+<button id="checkBtn">فحص الحساب</button>
+<p class="note">الفحص لا يثبت ملكية الحساب أو هويّة صاحبه.</p>
+</section>
 
-    <button id="loginBtn">Login</button>
-    <p id="status"></p>
-  </section>
+<section id="page2" class="card hidden">
+<h2>الصفحة 2 — Profile</h2>
+<div id="profileArea">
+<p id="profileLoading" class="note"></p>
+<img id="avatar" class="avatar hidden" alt="صورة البروفايل">
+<h3 id="profileName"></h3>
+<p id="profileUsername"></p>
+<a id="openProfile" class="button" target="_blank" rel="noopener noreferrer">فتح الحساب على Instagram</a>
+</div>
+<button id="verifyBtn">تحقّق من المعلومات ←</button>
+<button id="back1" class="secondary">رجوع</button>
+<p class="note">الصورة والاسم الظاهر يعتمدان على توفر البيانات من المصدر الخارجي.</p>
+</section>
 
-  <section id="app" class="card hidden">
-    <h2>مرحبا بك 👋</h2>
-    <p id="userEmail"></p>
+<section id="page3" class="card hidden">
+<h2>الصفحة 3 — معلومات الحساب</h2>
+<p id="detailsUser"></p>
 
-    <hr>
+<div class="grid">
+  <div class="stat"><div class="label">المتابعون</div><div id="followers" class="value">غير متاح</div></div>
+  <div class="stat"><div class="label">المتابَعون</div><div id="following" class="value">غير متاح</div></div>
+  <div class="stat"><div class="label">المنشورات</div><div id="posts" class="value">غير متاح</div></div>
+  <div class="stat"><div class="label">الإعجابات</div><div id="likes" class="value">غير متاح</div></div>
+  <div class="stat"><div class="label">المشاهدات</div><div id="views" class="value">غير متاح</div></div>
+  <div class="stat"><div class="label">حالة التوثيق</div><div id="verified" class="value">غير متاحة</div></div>
+</div>
 
-    <h2>فحص حساب Instagram</h2>
-    <p>اكتب اسم المستخدم واضغط على فحص الحساب.</p>
+<h3>نتيجة التحقق</h3>
+<ul id="checklist">
+<li>صيغة اسم المستخدم: لم يتم الفحص بعد</li>
+<li>صورة البروفايل: تعتمد على توفر المصدر</li>
+<li>الإحصائيات: تتطلب مصدر بيانات يدعمها</li>
+<li>هوية المالك: لا يمكن تأكيدها باسم المستخدم وحده</li>
+</ul>
 
-    <input id="igUser"
-      placeholder="Username أو @username"
-      autocomplete="off">
+<p id="message" class="note"></p>
+<button id="back2" class="secondary">رجوع إلى البروفايل</button>
+<button id="backHome" class="secondary">رجوع إلى البداية</button>
+<a class="button" href="https://www.instagram.com/accounts/verified/" target="_blank" rel="noopener noreferrer">طلب التوثيق الرسمي</a>
+</section>
 
-    <button id="checkBtn">فحص الحساب 🔎</button>
+<button id="logoutBtn" class="secondary hidden">تسجيل الخروج</button>
 
-    <div id="igResult" class="result hidden"></div>
+<script>
+const SUPABASE_URL="https://eqnbmmbjkdykzoldjxjp.supabase.co";
+const SUPABASE_KEY="sb_publishable_LKEgNqgJKg4KwqNV6Ml4Mg_OxP0bd3W";
+const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
-    <p class="note">
-      صورة البروفايل تُجلب من خدمة خارجية وقد لا تظهر لكل الحسابات.
-      هذه الخدمة لا تؤكد هوية المالك أو حالة التوثيق.
-    </p>
+const ids=["loginPage","page1","page2","page3"];
+function showPage(id){
+  ids.forEach(x=>document.getElementById(x).classList.toggle("hidden",x!==id));
+}
+function setLoggedIn(user){
+  showPage(user?"page1":"loginPage");
+  document.getElementById("logoutBtn").classList.toggle("hidden",!user);
+  if(user) document.getElementById("status").textContent="";
+}
+let currentUser="";
 
-    <a class="profile-link"
-      href="https://www.instagram.com/accounts/verified/"
-      target="_blank" rel="noopener noreferrer">
-      طلب التوثيق الرسمي 🔵
-    </a>
+document.getElementById("loginBtn").onclick=async()=>{
+  const email=document.getElementById("email").value.trim();
+  const password=document.getElementById("password").value;
+  const status=document.getElementById("status");
+  if(!email||!password){status.textContent="اكتب الإيميل وكلمة السر.";return}
+  status.textContent="جاري تسجيل الدخول...";
+  const {data,error}=await client.auth.signInWithPassword({email,password});
+  if(error){status.textContent="خطأ في الدخول: "+error.message;return}
+  document.getElementById("password").value="";
+  setLoggedIn(data.user);
+};
 
-    <button id="logoutBtn">تسجيل الخروج</button>
-  </section>
+document.getElementById("logoutBtn").onclick=async()=>{
+  const {error}=await client.auth.signOut();
+  if(error){alert(error.message);return}
+  setLoggedIn(null);
+};
 
-  <script>
-    const SUPABASE_URL =
-      "https://eqnbmmbjkdykzoldjxjp.supabase.co";
+document.getElementById("checkBtn").onclick=()=>{
+  const user=document.getElementById("username").value.trim().replace(/^@/,"");
+  if(!/^[a-zA-Z0-9._]{1,30}$/.test(user)){
+    alert("اكتب Username صحيح.");
+    return;
+  }
+  currentUser=user;
+  document.getElementById("profileName").textContent="@" + user;
+  document.getElementById("profileUsername").textContent="اسم المستخدم: "+user;
+  document.getElementById("profileLoading").textContent="جاري محاولة جلب صورة البروفايل...";
+  document.getElementById("avatar").classList.add("hidden");
+  document.getElementById("openProfile").href="https://www.instagram.com/"+encodeURIComponent(user)+"/";
+  document.getElementById("detailsUser").textContent="الحساب: @"+user;
 
-    const SUPABASE_KEY = "sb_publishable_LKEgNqgJKg4KwqNV6Ml4Mg_OxP0bd3W";
+  const img=document.getElementById("avatar");
+  img.onload=()=>{img.classList.remove("hidden");document.getElementById("profileLoading").textContent="تم تحميل الصورة."};
+  img.onerror=()=>{img.classList.add("hidden");document.getElementById("profileLoading").textContent="الصورة غير متاحة من المصدر الحالي."};
+  img.src="https://unavatar.io/instagram/"+encodeURIComponent(user);
 
-    const client = window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_KEY
-    );
+  document.getElementById("message").textContent=
+    "المعلومات التي تظهر هنا تعتمد على مصدر البيانات. لم يتم جلب إحصائيات حقيقية في هذه النسخة.";
+  showPage("page2");
+};
 
-    const loginCard = document.getElementById("loginCard");
-    const app = document.getElementById("app");
-    const status = document.getElementById("status");
+document.getElementById("verifyBtn").onclick=()=>{
+  if(!currentUser)return;
+  document.getElementById("detailsUser").textContent="الحساب: @"+currentUser;
+  document.getElementById("followers").textContent="غير متاح";
+  document.getElementById("following").textContent="غير متاح";
+  document.getElementById("posts").textContent="غير متاح";
+  document.getElementById("likes").textContent="غير متاح";
+  document.getElementById("views").textContent="غير متاح";
+  document.getElementById("verified").textContent="غير متاح";
+  document.getElementById("message").textContent=
+    "هذه النسخة لا تتصل بمصدر إحصائيات Instagram. الأرقام غير المتاحة لم يتم التحقق منها، ولا يتم اختلاق أرقام.";
+  showPage("page3");
+};
 
-    function showUser(user) {
-      loginCard.classList.add("hidden");
-      app.classList.remove("hidden");
+document.getElementById("back1").onclick=()=>showPage("page1");
+document.getElementById("back2").onclick=()=>showPage("page2");
+document.getElementById("backHome").onclick=()=>showPage("page1");
 
-      document.getElementById("userEmail").textContent =
-        user.email || "تم تسجيل الدخول";
-    }
-
-    function showLogin() {
-      app.classList.add("hidden");
-      loginCard.classList.remove("hidden");
-    }
-
-    document.getElementById("loginBtn").onclick = async () => {
-      const email =
-        document.getElementById("email").value.trim();
-      const password =
-        document.getElementById("password").value;
-
-      if (!email || !password) {
-        status.textContent = "اكتب الإيميل وكلمة السر.";
-        return;
-      }
-
-      status.textContent = "جاري تسجيل الدخول...";
-
-      const { data, error } =
-        await client.auth.signInWithPassword({
-          email, password
-        });
-
-      if (error) {
-        status.textContent =
-          "تعذّر تسجيل الدخول: " + error.message;
-        return;
-      }
-
-      status.textContent = "";
-      document.getElementById("password").value = "";
-      showUser(data.user);
-    };
-
-    document.getElementById("logoutBtn").onclick =
-      async () => {
-        const { error } = await client.auth.signOut();
-
-        if (error) {
-          alert(error.message);
-          return;
-        }
-
-        showLogin();
-      };
-
-    document.getElementById("checkBtn").onclick = () => {
-      const user = document.getElementById("igUser")
-        .value.trim().replace(/^@/, "");
-
-      const result = document.getElementById("igResult");
-      result.replaceChildren();
-      result.classList.remove("hidden");
-
-      if (!/^[a-zA-Z0-9._]{1,30}$/.test(user)) {
-        result.textContent =
-          "اكتب Username صحيح من غير مسافات.";
-        return;
-      }
-
-      const heading = document.createElement("h3");
-      heading.textContent = "@" + user;
-      result.appendChild(heading);
-
-      const loading = document.createElement("p");
-      loading.textContent = "جاري محاولة جلب صورة البروفايل...";
-      result.appendChild(loading);
-
-      const img = document.createElement("img");
-      img.className = "avatar";
-      img.alt = "صورة بروفايل @" + user;
-
-      let finished = false;
-
-      function finishImage(message) {
-        if (finished) return;
-        finished = true;
-        loading.textContent = message;
-      }
-
-      img.onload = () => {
-        finishImage("صورة البروفايل");
-      };
-
-      img.onerror = () => {
-        img.classList.add("hidden");
-        finishImage(
-          "ما نجّمش نجيب الصورة. الخدمة قد لا تدعم هذا الحساب."
-        );
-      };
-
-      img.src =
-        "https://unavatar.io/instagram/" +
-        encodeURIComponent(user);
-
-      result.appendChild(img);
-
-      const link = document.createElement("a");
-      link.className = "profile-link";
-      link.href =
-        "https://www.instagram.com/" +
-        encodeURIComponent(user) + "/";
-      link.target = "_blank";
-      link.rel = "noopener noreferrer";
-      link.textContent = "فتح الحساب على Instagram";
-      result.appendChild(link);
-
-      const note = document.createElement("p");
-      note.className = "note";
-      note.textContent =
-        "الاسم المكتوب لا يثبت ملكية الحساب أو توثيقه.";
-      result.appendChild(note);
-    };
-
-    async function refreshSession() {
-      const { data, error } = await client.auth.getSession();
-
-      if (error) {
-        status.textContent = error.message;
-        return;
-      }
-
-      if (data.session) showUser(data.session.user);
-      else showLogin();
-    }
-
-    client.auth.onAuthStateChange((_event, session) => {
-      if (session) showUser(session.user);
-      else showLogin();
-    });
-
-    refreshSession();
-  </script>
+client.auth.onAuthStateChange((_event,session)=>setLoggedIn(session?.user||null));
+async function restoreSession(){
+  const {data,error}=await client.auth.getSession();
+  if(error) document.getElementById("status").textContent=error.message;
+  setLoggedIn(data?.session?.user||null);
+}
+restoreSession();
+</script>
 </body>
 </html>
