@@ -5,8 +5,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>L7AJ Instagram Checker</title>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
+    * { box-sizing: border-box; }
+
     body {
       margin: 0;
       padding: 20px;
@@ -15,47 +19,96 @@
       font-family: Arial, sans-serif;
       text-align: center;
     }
+
+    h1 {
+      color: #b8a8ff;
+      font-size: 38px;
+    }
+
     .card {
-      max-width: 400px;
-      margin: 30px auto;
+      max-width: 420px;
+      margin: 25px auto;
       padding: 22px;
       background: #191923;
       border: 1px solid #343445;
       border-radius: 18px;
+      box-shadow: 0 8px 30px #0005;
     }
+
     input {
-      box-sizing: border-box;
+      display: block;
       width: 100%;
-      padding: 13px;
-      margin: 8px 0;
-      border-radius: 9px;
+      padding: 14px;
+      margin: 10px 0;
       border: 1px solid #444;
+      border-radius: 9px;
       background: #101018;
       color: white;
+      font-size: 16px;
     }
-    button {
+
+    button, .profile-link {
+      display: block;
       width: 100%;
-      padding: 13px;
-      margin-top: 10px;
+      padding: 14px;
+      margin-top: 12px;
       border: 0;
       border-radius: 9px;
       background: #7657ff;
       color: white;
+      font-size: 15px;
       font-weight: bold;
+      text-decoration: none;
+      cursor: pointer;
     }
-    a { color: #b8a8ff; }
-    .hidden { display: none; }
-    #status, #igResult { overflow-wrap: anywhere; }
+
+    a { color: #c7baff; }
+
+    .hidden { display: none !important; }
+
+    .result {
+      margin-top: 18px;
+      padding: 16px;
+      border-radius: 12px;
+      background: #101018;
+      overflow-wrap: anywhere;
+    }
+
+    .avatar {
+      display: block;
+      width: 120px;
+      height: 120px;
+      margin: 15px auto;
+      border-radius: 50%;
+      border: 3px solid #7657ff;
+      object-fit: cover;
+    }
+
+    .note {
+      color: #c5c5d5;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    #status, #igResult {
+      overflow-wrap: anywhere;
+    }
   </style>
 </head>
+
 <body>
   <h1>L7AJ</h1>
-  <p>Instagram Account Checker 🔵</p>
+  <p>Instagram Account Checker 🔎</p>
 
   <section id="loginCard" class="card">
     <h2>تسجيل الدخول</h2>
-    <input id="email" type="email" placeholder="الإيميل">
-    <input id="password" type="password" placeholder="كلمة السر">
+
+    <input id="email" type="email"
+      placeholder="الإيميل" autocomplete="email">
+
+    <input id="password" type="password"
+      placeholder="كلمة السر" autocomplete="current-password">
+
     <button id="loginBtn">Login</button>
     <p id="status"></p>
   </section>
@@ -65,19 +118,28 @@
     <p id="userEmail"></p>
 
     <hr>
-    <h2>فحص حساب Instagram 🔎</h2>
-    <p>اكتب اسم المستخدم لفتح الحساب والاطلاع على المعلومات العامة المتاحة.</p>
 
-    <input id="igUser" placeholder="Username أو @username">
-    <button id="checkBtn">فحص الحساب</button>
-    <p id="igResult"></p>
+    <h2>فحص حساب Instagram</h2>
+    <p>اكتب اسم المستخدم واضغط على فحص الحساب.</p>
 
-    <p>
-      <a href="https://www.instagram.com/accounts/verified/"
-         target="_blank" rel="noopener noreferrer">
-        طلب التحقّق الرسمي من Instagram
-      </a>
+    <input id="igUser"
+      placeholder="Username أو @username"
+      autocomplete="off">
+
+    <button id="checkBtn">فحص الحساب 🔎</button>
+
+    <div id="igResult" class="result hidden"></div>
+
+    <p class="note">
+      صورة البروفايل تُجلب من خدمة خارجية وقد لا تظهر لكل الحسابات.
+      هذه الخدمة لا تؤكد هوية المالك أو حالة التوثيق.
     </p>
+
+    <a class="profile-link"
+      href="https://www.instagram.com/accounts/verified/"
+      target="_blank" rel="noopener noreferrer">
+      طلب التوثيق الرسمي 🔵
+    </a>
 
     <button id="logoutBtn">تسجيل الخروج</button>
   </section>
@@ -87,8 +149,10 @@
       "https://eqnbmmbjkdykzoldjxjp.supabase.co";
 
     const SUPABASE_KEY = "sb_publishable_LKEgNqgJKg4KwqNV6Ml4Mg_OxP0bd3W";
+
     const client = window.supabase.createClient(
-      SUPABASE_URL, SUPABASE_KEY
+      SUPABASE_URL,
+      SUPABASE_KEY
     );
 
     const loginCard = document.getElementById("loginCard");
@@ -98,6 +162,7 @@
     function showUser(user) {
       loginCard.classList.add("hidden");
       app.classList.remove("hidden");
+
       document.getElementById("userEmail").textContent =
         user.email || "تم تسجيل الدخول";
     }
@@ -108,8 +173,10 @@
     }
 
     document.getElementById("loginBtn").onclick = async () => {
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value;
+      const email =
+        document.getElementById("email").value.trim();
+      const password =
+        document.getElementById("password").value;
 
       if (!email || !password) {
         status.textContent = "اكتب الإيميل وكلمة السر.";
@@ -117,12 +184,15 @@
       }
 
       status.textContent = "جاري تسجيل الدخول...";
-      const { data, error } = await client.auth.signInWithPassword({
-        email, password
-      });
+
+      const { data, error } =
+        await client.auth.signInWithPassword({
+          email, password
+        });
 
       if (error) {
-        status.textContent = error.message;
+        status.textContent =
+          "تعذّر تسجيل الدخول: " + error.message;
         return;
       }
 
@@ -131,49 +201,94 @@
       showUser(data.user);
     };
 
-    document.getElementById("logoutBtn").onclick = async () => {
-      const { error } = await client.auth.signOut();
-      if (error) {
-        alert(error.message);
-        return;
-      }
-      showLogin();
-    };
+    document.getElementById("logoutBtn").onclick =
+      async () => {
+        const { error } = await client.auth.signOut();
+
+        if (error) {
+          alert(error.message);
+          return;
+        }
+
+        showLogin();
+      };
 
     document.getElementById("checkBtn").onclick = () => {
       const user = document.getElementById("igUser")
         .value.trim().replace(/^@/, "");
+
       const result = document.getElementById("igResult");
       result.replaceChildren();
+      result.classList.remove("hidden");
 
       if (!/^[a-zA-Z0-9._]{1,30}$/.test(user)) {
-        result.textContent = "اكتب Username صحيح.";
+        result.textContent =
+          "اكتب Username صحيح من غير مسافات.";
         return;
       }
 
-      result.textContent =
-        "الحساب المطلوب: @" + user + " — ";
+      const heading = document.createElement("h3");
+      heading.textContent = "@" + user;
+      result.appendChild(heading);
+
+      const loading = document.createElement("p");
+      loading.textContent = "جاري محاولة جلب صورة البروفايل...";
+      result.appendChild(loading);
+
+      const img = document.createElement("img");
+      img.className = "avatar";
+      img.alt = "صورة بروفايل @" + user;
+
+      let finished = false;
+
+      function finishImage(message) {
+        if (finished) return;
+        finished = true;
+        loading.textContent = message;
+      }
+
+      img.onload = () => {
+        finishImage("صورة البروفايل");
+      };
+
+      img.onerror = () => {
+        img.classList.add("hidden");
+        finishImage(
+          "ما نجّمش نجيب الصورة. الخدمة قد لا تدعم هذا الحساب."
+        );
+      };
+
+      img.src =
+        "https://unavatar.io/instagram/" +
+        encodeURIComponent(user);
+
+      result.appendChild(img);
 
       const link = document.createElement("a");
-      link.href = "https://www.instagram.com/" +
+      link.className = "profile-link";
+      link.href =
+        "https://www.instagram.com/" +
         encodeURIComponent(user) + "/";
       link.target = "_blank";
       link.rel = "noopener noreferrer";
-      link.textContent = "فتح الحساب";
+      link.textContent = "فتح الحساب على Instagram";
       result.appendChild(link);
 
       const note = document.createElement("p");
+      note.className = "note";
       note.textContent =
-        "هذا فحص أولي للاسم فقط، وليس تأكيداً لهوية صاحب الحساب أو أهليته للعلامة الزرقاء.";
+        "الاسم المكتوب لا يثبت ملكية الحساب أو توثيقه.";
       result.appendChild(note);
     };
 
     async function refreshSession() {
       const { data, error } = await client.auth.getSession();
+
       if (error) {
         status.textContent = error.message;
         return;
       }
+
       if (data.session) showUser(data.session.user);
       else showLogin();
     }
