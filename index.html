@@ -1,6 +1,5 @@
-
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,13 +9,14 @@
 *{box-sizing:border-box}
 body{margin:0;padding:18px;background:#0c0c12;color:#fff;font-family:Arial,sans-serif;text-align:center}
 h1{color:#b8a8ff;font-size:34px}
-.card{max-width:440px;margin:20px auto;padding:22px;background:#191923;border:1px solid #343445;border-radius:18px;box-shadow:0 8px 30px #0005}
+.card{max-width:480px;margin:20px auto;padding:22px;background:#191923;border:1px solid #343445;border-radius:18px;box-shadow:0 8px 30px #0005}
 input{width:100%;padding:14px;margin:9px 0;border:1px solid #444;border-radius:9px;background:#101018;color:white;font-size:16px}
 button,.button{display:block;width:100%;padding:13px;margin-top:11px;border:0;border-radius:9px;background:#7657ff;color:white;font-weight:bold;font-size:15px;text-decoration:none;cursor:pointer}
+button:disabled{opacity:.55;cursor:wait}
 .secondary{background:#343445}
 .hidden{display:none!important}
 .note{color:#c5c5d5;font-size:13px;line-height:1.7}
-#status,#message{overflow-wrap:anywhere}
+#status,#message,#adminStatus{overflow-wrap:anywhere}
 .avatar{width:125px;height:125px;object-fit:cover;border-radius:50%;border:3px solid #7657ff;margin:15px auto;display:block}
 .stat{background:#101018;padding:13px;border-radius:10px;border:1px solid #343445}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px}
@@ -24,25 +24,25 @@ button,.button{display:block;width:100%;padding:13px;margin-top:11px;border:0;bo
 .value{font-size:19px;font-weight:bold;margin-top:8px;overflow-wrap:anywhere}
 ul{text-align:right;line-height:2}
 a{color:#c7baff}
+hr{border:0;border-top:1px solid #343445;margin:20px 0}
 </style>
 </head>
 <body>
-
 <h1>L7AJ CHECKER</h1>
 <p>Instagram Account Information</p>
 
 <section id="loginPage" class="card">
 <h2>تسجيل الدخول</h2>
-<input id="email" type="email" placeholder="الإيميل" autocomplete="email">
-<input id="password" type="password" placeholder="كلمة السر" autocomplete="current-password">
+<input id="loginUsername" type="text" placeholder="اسم المستخدم" autocomplete="username" autocapitalize="none">
+<input id="loginPassword" type="password" placeholder="كلمة السر" autocomplete="current-password">
 <button id="loginBtn">دخول</button>
-<p id="status" class="note"></p>
+<p id="status" class="note" role="status"></p>
 </section>
 
 <section id="page1" class="card hidden">
 <h2>الصفحة 1 — فحص الحساب 🔎</h2>
 <p>اكتب اسم المستخدم من غير كلمة السر.</p>
-<input id="username" placeholder="@username">
+<input id="username" placeholder="@username" autocapitalize="none">
 <button id="checkBtn">فحص الحساب</button>
 <p class="note">الفحص لا يثبت ملكية الحساب أو هويّة صاحبه.</p>
 </section>
@@ -64,7 +64,6 @@ a{color:#c7baff}
 <section id="page3" class="card hidden">
 <h2>الصفحة 3 — معلومات الحساب</h2>
 <p id="detailsUser"></p>
-
 <div class="grid">
   <div class="stat"><div class="label">المتابعون</div><div id="followers" class="value">غير متاح</div></div>
   <div class="stat"><div class="label">المتابَعون</div><div id="following" class="value">غير متاح</div></div>
@@ -73,7 +72,6 @@ a{color:#c7baff}
   <div class="stat"><div class="label">المشاهدات</div><div id="views" class="value">غير متاح</div></div>
   <div class="stat"><div class="label">حالة التوثيق</div><div id="verified" class="value">غير متاحة</div></div>
 </div>
-
 <h3>نتيجة التحقق</h3>
 <ul id="checklist">
 <li>صيغة اسم المستخدم: لم يتم الفحص بعد</li>
@@ -81,96 +79,213 @@ a{color:#c7baff}
 <li>الإحصائيات: تتطلب مصدر بيانات يدعمها</li>
 <li>هوية المالك: لا يمكن تأكيدها باسم المستخدم وحده</li>
 </ul>
-
 <p id="message" class="note"></p>
 <button id="back2" class="secondary">رجوع إلى البروفايل</button>
 <button id="backHome" class="secondary">رجوع إلى البداية</button>
 <a class="button" href="https://www.instagram.com/accounts/verified/" target="_blank" rel="noopener noreferrer">طلب التوثيق الرسمي</a>
 </section>
 
+<section id="adminPage" class="card hidden">
+<h2>لوحة الأدمن 🔐</h2>
+<p class="note">أنشئ حسابًا جديدًا باسم مستخدم وكلمة سر. لا تشارك كلمة سر الأدمن.</p>
+<input id="newUsername" type="text" placeholder="اسم المستخدم الجديد" autocomplete="off" autocapitalize="none">
+<input id="newPassword" type="password" placeholder="كلمة سر المستخدم (8 أحرف على الأقل)" autocomplete="new-password">
+<button id="createUserBtn">إنشاء الحساب</button>
+<p id="adminStatus" class="note" role="status"></p>
+<hr>
+<button id="adminHomeBtn" class="secondary">الرجوع إلى فحص الحساب</button>
+</section>
+
+<div class="card">
+<p id="signedInAs" class="note"></p>
+<button id="adminOpenBtn" class="hidden">لوحة الأدمن</button>
 <button id="logoutBtn" class="secondary hidden">تسجيل الخروج</button>
+</div>
 
 <script>
-const SUPABASE_URL="https://eqnbmmbjkdykzoldjxjp.supabase.co";
-const SUPABASE_KEY="sb_publishable_LKEgNqgJKg4KwqNV6Ml4Mg_OxP0bd3W";
-const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const SUPABASE_URL = "https://eqnbmmbjkdykzoldjxjp.supabase.co";
+const SUPABASE_KEY = "sb_publishable_LKEgNqgJKg4KwqNV6Ml4Mg_OxP0bd3W";
+const MANAGE_USERS_URL = SUPABASE_URL + "/functions/v1/manage-users";
+const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-const ids=["loginPage","page1","page2","page3"];
-function showPage(id){
-  ids.forEach(x=>document.getElementById(x).classList.toggle("hidden",x!==id));
-}
-function setLoggedIn(user){
-  showPage(user?"page1":"loginPage");
-  document.getElementById("logoutBtn").classList.toggle("hidden",!user);
-  if(user) document.getElementById("status").textContent="";
-}
-let currentUser="";
+const pageIds = ["loginPage","page1","page2","page3","adminPage"];
+let currentUser = "";
+let activeProfile = null;
+let isAdmin = false;
 
-document.getElementById("loginBtn").onclick=async()=>{
-  const email=document.getElementById("email").value.trim();
-  const password=document.getElementById("password").value;
-  const status=document.getElementById("status");
-  if(!email||!password){status.textContent="اكتب الإيميل وكلمة السر.";return}
-  status.textContent="جاري تسجيل الدخول...";
-  const {data,error}=await client.auth.signInWithPassword({email,password});
-  if(error){status.textContent="خطأ في الدخول: "+error.message;return}
-  document.getElementById("password").value="";
-  setLoggedIn(data.user);
+function showPage(id) {
+  pageIds.forEach(x => document.getElementById(x).classList.toggle("hidden", x !== id));
+}
+function setStatus(id, message) {
+  document.getElementById(id).textContent = message || "";
+}
+function usernameToEmail(username) {
+  return username.toLowerCase() + "@accounts.l7aj.local";
+}
+function validUsername(username) {
+  return /^[a-zA-Z0-9._-]{3,30}$/.test(username);
+}
+async function loadUserState(user) {
+  isAdmin = false;
+  activeProfile = null;
+  document.getElementById("adminOpenBtn").classList.add("hidden");
+  document.getElementById("logoutBtn").classList.toggle("hidden", !user);
+  document.getElementById("signedInAs").textContent = "";
+  if (!user) {
+    showPage("loginPage");
+    return;
+  }
+  const { data: profile, error } = await client
+    .from("profiles").select("username,role").eq("id", user.id).maybeSingle();
+  if (error) {
+    setStatus("status", "تم تسجيل الدخول، لكن تعذّر تحميل صلاحيات الحساب. راجع إعدادات profiles في Supabase.");
+    showPage("page1");
+    return;
+  }
+  activeProfile = profile;
+  isAdmin = profile?.role === "admin";
+  document.getElementById("adminOpenBtn").classList.toggle("hidden", !isAdmin);
+  document.getElementById("signedInAs").textContent =
+    "مسجّل الدخول: " + (profile?.username || "مستخدم");
+  setStatus("status", "");
+  showPage("page1");
+}
+
+document.getElementById("loginBtn").onclick = async () => {
+  const username = document.getElementById("loginUsername").value.trim();
+  const password = document.getElementById("loginPassword").value;
+  if (!validUsername(username) || !password) {
+    setStatus("status", "اكتب اسم مستخدم صحيح (3 إلى 30 حرفًا: إنجليزي أو أرقام أو . _ -) وكلمة السر.");
+    return;
+  }
+  const button = document.getElementById("loginBtn");
+  button.disabled = true;
+  setStatus("status", "جاري تسجيل الدخول...");
+  const { data, error } = await client.auth.signInWithPassword({
+    email: usernameToEmail(username), password
+  });
+  button.disabled = false;
+  if (error) {
+    setStatus("status", "تعذّر الدخول. تثبّت من اسم المستخدم وكلمة السر.");
+    return;
+  }
+  document.getElementById("loginPassword").value = "";
+  await loadUserState(data.user);
 };
 
-document.getElementById("logoutBtn").onclick=async()=>{
-  const {error}=await client.auth.signOut();
-  if(error){alert(error.message);return}
-  setLoggedIn(null);
+document.getElementById("logoutBtn").onclick = async () => {
+  const { error } = await client.auth.signOut();
+  if (error) { alert("تعذّر تسجيل الخروج."); return; }
+  await loadUserState(null);
 };
 
-document.getElementById("checkBtn").onclick=()=>{
-  const user=document.getElementById("username").value.trim().replace(/^@/,"");
-  if(!/^[a-zA-Z0-9._]{1,30}$/.test(user)){
+document.getElementById("adminOpenBtn").onclick = () => {
+  if (!isAdmin) return;
+  setStatus("adminStatus", "");
+  showPage("adminPage");
+};
+document.getElementById("adminHomeBtn").onclick = () => showPage("page1");
+
+document.getElementById("createUserBtn").onclick = async () => {
+  if (!isAdmin) {
+    setStatus("adminStatus", "ما عندكش صلاحيات الأدمن.");
+    return;
+  }
+  const username = document.getElementById("newUsername").value.trim();
+  const password = document.getElementById("newPassword").value;
+  if (!validUsername(username)) {
+    setStatus("adminStatus", "اسم المستخدم لازم يكون 3 إلى 30 حرفًا: إنجليزي أو أرقام أو . _ -");
+    return;
+  }
+  if (password.length < 8) {
+    setStatus("adminStatus", "كلمة السر لازم تكون 8 أحرف على الأقل.");
+    return;
+  }
+  const { data: sessionData } = await client.auth.getSession();
+  const token = sessionData?.session?.access_token;
+  if (!token) {
+    setStatus("adminStatus", "جلسة الدخول انتهت. سجّل الدخول من جديد.");
+    return;
+  }
+  const button = document.getElementById("createUserBtn");
+  button.disabled = true;
+  setStatus("adminStatus", "جاري إنشاء الحساب...");
+  try {
+    const response = await fetch(MANAGE_USERS_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token,
+        "apikey": SUPABASE_KEY
+      },
+      body: JSON.stringify({ username, password })
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      const safeMessage = result.error || result.message || "تعذّر إنشاء الحساب.";
+      setStatus("adminStatus", "فشل إنشاء الحساب: " + safeMessage);
+      return;
+    }
+    setStatus("adminStatus", "تم إنشاء حساب " + username + " بنجاح.");
+    document.getElementById("newUsername").value = "";
+    document.getElementById("newPassword").value = "";
+  } catch (e) {
+    setStatus("adminStatus", "تعذّر الاتصال بالخادم. تثبّت من نشر دالة manage-users وإعداداتها.");
+  } finally {
+    button.disabled = false;
+  }
+};
+
+document.getElementById("checkBtn").onclick = () => {
+  const user = document.getElementById("username").value.trim().replace(/^@/, "");
+  if (!/^[a-zA-Z0-9._]{1,30}$/.test(user)) {
     alert("اكتب Username صحيح.");
     return;
   }
-  currentUser=user;
-  document.getElementById("profileName").textContent="@" + user;
-  document.getElementById("profileUsername").textContent="اسم المستخدم: "+user;
-  document.getElementById("profileLoading").textContent="جاري محاولة جلب صورة البروفايل...";
+  currentUser = user;
+  document.getElementById("profileName").textContent = "@" + user;
+  document.getElementById("profileUsername").textContent = "اسم المستخدم: " + user;
+  document.getElementById("profileLoading").textContent = "جاري محاولة جلب صورة البروفايل...";
   document.getElementById("avatar").classList.add("hidden");
-  document.getElementById("openProfile").href="https://www.instagram.com/"+encodeURIComponent(user)+"/";
-  document.getElementById("detailsUser").textContent="الحساب: @"+user;
-
-  const img=document.getElementById("avatar");
-  img.onload=()=>{img.classList.remove("hidden");document.getElementById("profileLoading").textContent="تم تحميل الصورة."};
-  img.onerror=()=>{img.classList.add("hidden");document.getElementById("profileLoading").textContent="الصورة غير متاحة من المصدر الحالي."};
-  img.src="https://unavatar.io/instagram/"+encodeURIComponent(user);
-
-  document.getElementById("message").textContent=
-    "المعلومات التي تظهر هنا تعتمد على مصدر البيانات. لم يتم جلب إحصائيات حقيقية في هذه النسخة.";
+  document.getElementById("openProfile").href = "https://www.instagram.com/" + encodeURIComponent(user) + "/";
+  document.getElementById("detailsUser").textContent = "الحساب: @" + user;
+  const img = document.getElementById("avatar");
+  img.onload = () => {
+    img.classList.remove("hidden");
+    document.getElementById("profileLoading").textContent = "تم تحميل الصورة.";
+  };
+  img.onerror = () => {
+    img.classList.add("hidden");
+    document.getElementById("profileLoading").textContent = "الصورة غير متاحة من المصدر الحالي.";
+  };
+  img.src = "https://unavatar.io/instagram/" + encodeURIComponent(user);
+  document.getElementById("message").textContent =
+    "المعلومات تعتمد على مصدر البيانات. لم يتم جلب إحصائيات حقيقية في هذه النسخة.";
   showPage("page2");
 };
 
-document.getElementById("verifyBtn").onclick=()=>{
-  if(!currentUser)return;
-  document.getElementById("detailsUser").textContent="الحساب: @"+currentUser;
-  document.getElementById("followers").textContent="غير متاح";
-  document.getElementById("following").textContent="غير متاح";
-  document.getElementById("posts").textContent="غير متاح";
-  document.getElementById("likes").textContent="غير متاح";
-  document.getElementById("views").textContent="غير متاح";
-  document.getElementById("verified").textContent="غير متاح";
-  document.getElementById("message").textContent=
+document.getElementById("verifyBtn").onclick = () => {
+  if (!currentUser) return;
+  document.getElementById("detailsUser").textContent = "الحساب: @" + currentUser;
+  ["followers","following","posts","likes","views"].forEach(id =>
+    document.getElementById(id).textContent = "غير متاح");
+  document.getElementById("verified").textContent = "غير متاح";
+  document.getElementById("message").textContent =
     "هذه النسخة لا تتصل بمصدر إحصائيات Instagram. الأرقام غير المتاحة لم يتم التحقق منها، ولا يتم اختلاق أرقام.";
   showPage("page3");
 };
+document.getElementById("back1").onclick = () => showPage("page1");
+document.getElementById("back2").onclick = () => showPage("page2");
+document.getElementById("backHome").onclick = () => showPage("page1");
 
-document.getElementById("back1").onclick=()=>showPage("page1");
-document.getElementById("back2").onclick=()=>showPage("page2");
-document.getElementById("backHome").onclick=()=>showPage("page1");
-
-client.auth.onAuthStateChange((_event,session)=>setLoggedIn(session?.user||null));
-async function restoreSession(){
-  const {data,error}=await client.auth.getSession();
-  if(error) document.getElementById("status").textContent=error.message;
-  setLoggedIn(data?.session?.user||null);
+client.auth.onAuthStateChange((_event, session) => {
+  // Avoid doing profile requests directly inside the auth callback.
+  if (_event === "SIGNED_OUT") loadUserState(null);
+});
+async function restoreSession() {
+  const { data, error } = await client.auth.getSession();
+  if (error) setStatus("status", "تعذّر استرجاع جلسة الدخول.");
+  await loadUserState(data?.session?.user || null);
 }
 restoreSession();
 </script>
